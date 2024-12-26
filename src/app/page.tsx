@@ -40,7 +40,9 @@ export default function Home() {
             <nav>
               <ul>
                 {recordedNumber.map((number, index) => (
-                  <li key={index}>{`${index + 1}번 : ${number}`}</li>
+                  <li key={index}>
+                    <span>{`${index + 1}번 : ${number}`}</span>
+                  </li>
                 ))}
               </ul>
             </nav>
