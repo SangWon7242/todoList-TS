@@ -2,8 +2,9 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState<number>(0);
   const [recordedNumber, setRecordedNumber] = useState<number[]>([]);
+  const [editMode, setEditMode] = useState<boolean>(false);
 
   return (
     <>
@@ -41,7 +42,22 @@ export default function Home() {
               <ul>
                 {recordedNumber.map((number, index) => (
                   <li key={index}>
-                    <span>{`${index + 1}번 : ${number}`}</span>
+                    {editMode ? (
+                      <>
+                        <input type="number" placeholder="숫자 입력" />
+                        <button>수정</button>
+                        &nbsp;
+                        <button onClick={() => setEditMode(false)}>취소</button>
+                      </>
+                    ) : (
+                      <>
+                        <span>{`${index + 1}번 : ${number}`}</span>
+                        &nbsp;
+                        <button onClick={() => setEditMode(true)}>수정</button>
+                        &nbsp;
+                        <button>삭제</button>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>
