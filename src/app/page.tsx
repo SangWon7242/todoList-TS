@@ -1,9 +1,14 @@
-import Image from "next/image";
+"use client";
+import { useState } from "react";
 
 export default function Home() {
+  const [count, setCount] = useState(0);
+
   return (
     <div>
-      <h1>안녕하세요</h1>
+      <button onClick={() => setCount(count + 1)}>증가</button>
+      <button onClick={() => setCount(count - 1)}>감소</button>
+      <p>{count}</p>
     </div>
   );
 }
