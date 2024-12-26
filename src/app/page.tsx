@@ -35,7 +35,16 @@ export default function Home() {
         {recordedNumber.length == 0 ? (
           <p>기록된 숫자가 없습니다.</p>
         ) : (
-          <p>{JSON.stringify(recordedNumber)}</p>
+          <>
+            <h2>숫자 기록</h2>
+            <nav>
+              <ul>
+                {recordedNumber.map((number, index) => (
+                  <li key={index}>{`${index + 1}번 : ${number}`}</li>
+                ))}
+              </ul>
+            </nav>
+          </>
         )}
       </div>
     </>
