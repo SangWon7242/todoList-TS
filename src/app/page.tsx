@@ -1,11 +1,20 @@
 "use client";
 import { useState } from "react";
 
-export default function Home() {
-  const [count, setCount] = useState<number>(0);
-  const [recordedNumber, setRecordedNumber] = useState<number[]>([]);
-  const [editMode, setEditMode] = useState<boolean>(false);
+// NumberRecordForm 컴포넌트
+interface NumberRecordFormProps {
+  count: number;
+  setCount: React.Dispatch<React.SetStateAction<number>>;
+  recordedNumber: number[];
+  setRecordedNumber: React.Dispatch<React.SetStateAction<number[]>>;
+}
 
+const NumberRecordForm: React.FC<NumberRecordFormProps> = ({
+  count,
+  setCount,
+  recordedNumber,
+  setRecordedNumber,
+}) => {
   return (
     <>
       <div>
@@ -32,6 +41,30 @@ export default function Home() {
           초기화
         </button>
       </div>
+    </>
+  );
+};
+
+// NumberRecordListProps 컴포넌트
+interface NumberRecordListProps {
+  recordedNumber: number[];
+  setRecordedNumber: React.Dispatch<React.SetStateAction<number[]>>;
+  editMode: boolean;
+  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
+  modifiedNumber: number;
+  setModifiedNumber: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const NumberRecordList: React.FC<NumberRecordListProps> = ({
+  recordedNumber,
+  setRecordedNumber,
+  editMode,
+  setEditMode,
+  modifiedNumber,
+  setModifiedNumber,
+}) => {
+  return (
+    <>
       <div>
         {recordedNumber.length == 0 ? (
           <p>기록된 숫자가 없습니다.</p>
@@ -44,7 +77,13 @@ export default function Home() {
                   <li key={index}>
                     {editMode ? (
                       <>
-                        <input type="number" placeholder="숫자 입력" />
+                        <input
+                          type="number"
+                          placeholder="숫자 입력"
+                          onChange={(e) =>
+                            setModifiedNumber(Number(e.target.value))
+                          }
+                        />
                         <button>수정</button>
                         &nbsp;
                         <button onClick={() => setEditMode(false)}>취소</button>
@@ -65,6 +104,32 @@ export default function Home() {
           </>
         )}
       </div>
+    </>
+  );
+};
+
+export default function Home() {
+  const [count, setCount] = useState<number>(0);
+  const [recordedNumber, setRecordedNumber] = useState<number[]>([]);
+  const [editMode, setEditMode] = useState<boolean>(false);
+  const [modifiedNumber, setModifiedNumber] = useState<number>(0);
+
+  return (
+    <>
+      <NumberRecordForm
+        count={count}
+        setCount={setCount}
+        recordedNumber={recordedNumber}
+        setRecordedNumber={setRecordedNumber}
+      />
+      <NumberRecordList
+        recordedNumber={recordedNumber}
+        setRecordedNumber={setRecordedNumber}
+        editMode={editMode}
+        setEditMode={setEditMode}
+        modifiedNumber={modifiedNumber}
+        setModifiedNumber={setModifiedNumber}
+      />
     </>
   );
 }
