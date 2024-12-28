@@ -4,43 +4,82 @@ import { useState } from "react";
 // NumberRecordForm 컴포넌트
 interface NumberRecordFormProps {
   count: number;
-  setCount: React.Dispatch<React.SetStateAction<number>>;
-  recordedNumber: number[];
-  setRecordedNumber: React.Dispatch<React.SetStateAction<number[]>>;
+  increaseCount: () => void;
+  decreaseCount: () => void;
+  resetCount: () => void;
+  recordNumber: () => void;
 }
 
 const NumberRecordForm: React.FC<NumberRecordFormProps> = ({
   count,
-  setCount,
-  recordedNumber,
-  setRecordedNumber,
+  increaseCount,
+  decreaseCount,
+  resetCount,
+  recordNumber,
 }) => {
   return (
     <>
       <div>
         <h1>{count}</h1>
-        <button onClick={() => setCount(count + 1)}>증가</button>
+        <button onClick={increaseCount}>증가</button>
         &nbsp;
-        <button onClick={() => setCount(count - 1)}>감소</button>
+        <button onClick={decreaseCount}>감소</button>
         <br />
-        <button
-          onClick={() => {
-            if (count == 0) return;
-            setRecordedNumber([...recordedNumber, count]);
-          }}
-        >
-          기록
-        </button>
+        <button onClick={recordNumber}>기록</button>
         &nbsp;
-        <button
-          onClick={() => {
-            setCount(0);
-            setRecordedNumber([]);
-          }}
-        >
-          초기화
-        </button>
+        <button onClick={resetCount}>초기화</button>
       </div>
+    </>
+  );
+};
+
+// NumberListItem 컴포넌트
+interface NumberListItemProps {
+  index: number;
+  number: number;
+  modifyNumber: (index: Number) => void;
+  setModifiedNumber: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const NumberListItem: React.FC<NumberListItemProps> = ({
+  index,
+  number,
+  modifyNumber,
+  setModifiedNumber,
+}) => {
+  const [editMode, setEditMode] = useState<boolean>(false);
+
+  return (
+    <>
+      <li>
+        {editMode ? (
+          <>
+            <input
+              type="number"
+              placeholder="숫자 입력"
+              onChange={(e) => setModifiedNumber(Number(e.target.value))}
+            />
+            <button
+              onClick={() => {
+                setEditMode(false);
+                modifyNumber(index);
+              }}
+            >
+              수정
+            </button>
+            &nbsp;
+            <button onClick={() => setEditMode(false)}>취소</button>
+          </>
+        ) : (
+          <>
+            <span>{`${index + 1}번 : ${number}`}</span>
+            &nbsp;
+            <button onClick={() => setEditMode(true)}>수정</button>
+            &nbsp;
+            <button>삭제</button>
+          </>
+        )}
+      </li>
     </>
   );
 };
@@ -49,18 +88,14 @@ const NumberRecordForm: React.FC<NumberRecordFormProps> = ({
 interface NumberRecordListProps {
   recordedNumber: number[];
   setRecordedNumber: React.Dispatch<React.SetStateAction<number[]>>;
-  editMode: boolean;
-  setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
-  modifiedNumber: number;
+  modifyNumber: (index: Number) => void;
   setModifiedNumber: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const NumberRecordList: React.FC<NumberRecordListProps> = ({
   recordedNumber,
   setRecordedNumber,
-  editMode,
-  setEditMode,
-  modifiedNumber,
+  modifyNumber,
   setModifiedNumber,
 }) => {
   return (
@@ -74,30 +109,13 @@ const NumberRecordList: React.FC<NumberRecordListProps> = ({
             <nav>
               <ul>
                 {recordedNumber.map((number, index) => (
-                  <li key={index}>
-                    {editMode ? (
-                      <>
-                        <input
-                          type="number"
-                          placeholder="숫자 입력"
-                          onChange={(e) =>
-                            setModifiedNumber(Number(e.target.value))
-                          }
-                        />
-                        <button>수정</button>
-                        &nbsp;
-                        <button onClick={() => setEditMode(false)}>취소</button>
-                      </>
-                    ) : (
-                      <>
-                        <span>{`${index + 1}번 : ${number}`}</span>
-                        &nbsp;
-                        <button onClick={() => setEditMode(true)}>수정</button>
-                        &nbsp;
-                        <button>삭제</button>
-                      </>
-                    )}
-                  </li>
+                  <NumberListItem
+                    key={index}
+                    number={number}
+                    index={index}
+                    modifyNumber={modifyNumber}
+                    setModifiedNumber={setModifiedNumber}
+                  />
                 ))}
               </ul>
             </nav>
@@ -111,23 +129,47 @@ const NumberRecordList: React.FC<NumberRecordListProps> = ({
 export default function Home() {
   const [count, setCount] = useState<number>(0);
   const [recordedNumber, setRecordedNumber] = useState<number[]>([]);
-  const [editMode, setEditMode] = useState<boolean>(false);
   const [modifiedNumber, setModifiedNumber] = useState<number>(0);
+
+  const increaseCount = () => {
+    setCount(count + 1);
+  };
+
+  const decreaseCount = () => {
+    setCount(count - 1);
+  };
+
+  const resetCount = () => {
+    setCount(0);
+    setRecordedNumber([]);
+  };
+
+  const recordNumber = () => {
+    if (count == 0) return;
+    setRecordedNumber([...recordedNumber, count]);
+  };
+
+  const modifyNumber = (index: Number) => {
+    const number = recordedNumber.map((number, _index) =>
+      _index == index ? modifiedNumber : number
+    );
+
+    setRecordedNumber(number);
+  };
 
   return (
     <>
       <NumberRecordForm
         count={count}
-        setCount={setCount}
-        recordedNumber={recordedNumber}
-        setRecordedNumber={setRecordedNumber}
+        increaseCount={increaseCount}
+        decreaseCount={decreaseCount}
+        resetCount={resetCount}
+        recordNumber={recordNumber}
       />
       <NumberRecordList
         recordedNumber={recordedNumber}
         setRecordedNumber={setRecordedNumber}
-        editMode={editMode}
-        setEditMode={setEditMode}
-        modifiedNumber={modifiedNumber}
+        modifyNumber={modifyNumber}
         setModifiedNumber={setModifiedNumber}
       />
     </>
