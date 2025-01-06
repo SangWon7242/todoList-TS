@@ -38,6 +38,7 @@ interface NumberListItemProps {
   index: number;
   number: number;
   modifyNumber: (index: Number) => void;
+  deleteNumber: (index: Number) => void;
   setModifiedNumber: React.Dispatch<React.SetStateAction<number>>;
 }
 
@@ -45,6 +46,7 @@ const NumberListItem: React.FC<NumberListItemProps> = ({
   index,
   number,
   modifyNumber,
+  deleteNumber,
   setModifiedNumber,
 }) => {
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -76,7 +78,7 @@ const NumberListItem: React.FC<NumberListItemProps> = ({
             &nbsp;
             <button onClick={() => setEditMode(true)}>수정</button>
             &nbsp;
-            <button>삭제</button>
+            <button onClick={() => deleteNumber(index)}>삭제</button>
           </>
         )}
       </li>
@@ -87,15 +89,15 @@ const NumberListItem: React.FC<NumberListItemProps> = ({
 // NumberRecordListProps 컴포넌트
 interface NumberRecordListProps {
   recordedNumber: number[];
-  setRecordedNumber: React.Dispatch<React.SetStateAction<number[]>>;
   modifyNumber: (index: Number) => void;
+  deleteNumber: (index: Number) => void;
   setModifiedNumber: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const NumberRecordList: React.FC<NumberRecordListProps> = ({
   recordedNumber,
-  setRecordedNumber,
   modifyNumber,
+  deleteNumber,
   setModifiedNumber,
 }) => {
   return (
@@ -114,6 +116,7 @@ const NumberRecordList: React.FC<NumberRecordListProps> = ({
                     number={number}
                     index={index}
                     modifyNumber={modifyNumber}
+                    deleteNumber={deleteNumber}
                     setModifiedNumber={setModifiedNumber}
                   />
                 ))}
@@ -157,6 +160,11 @@ export default function Home() {
     setRecordedNumber(number);
   };
 
+  const deleteNumber = (index: Number) => {
+    const number = recordedNumber.filter((_, _index) => _index != index);
+    setRecordedNumber(number);
+  };
+
   return (
     <>
       <NumberRecordForm
@@ -168,8 +176,8 @@ export default function Home() {
       />
       <NumberRecordList
         recordedNumber={recordedNumber}
-        setRecordedNumber={setRecordedNumber}
         modifyNumber={modifyNumber}
+        deleteNumber={deleteNumber}
         setModifiedNumber={setModifiedNumber}
       />
     </>
